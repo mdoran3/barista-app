@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import RecipeChoices from './RecipeChoices'
 import drinksJson from '../data/drinks.json'
+import { useEffect } from 'react'
 
 const ingredients = {
     temperature: ['hot', 'lukewarm', 'cold'],
@@ -10,6 +11,10 @@ const ingredients = {
 }
 
 const BaristaForm = () => {
+
+    useEffect(() => {
+        getNewDrink();
+    }, []);
 
     const [correct_temp, setCheckedTemperature] = useState('');
     const [correct_syrup, setCheckedSyrup] = useState('');
@@ -33,36 +38,21 @@ const BaristaForm = () => {
 
     const onCheckAnswer = () => {
 
-        if (trueRecipe.temp != inputs["temperature"]) {
-            setCheckedTemperature('wrong')
-        }
-        else {
-            setCheckedTemperature('correct')
-        }
+        const tempResult = trueRecipe.temp != inputs["temperature"] ? 'wrong' : 'correct'
+        const milkResult = trueRecipe.milk != inputs["milk"] ? 'wrong' : 'correct'
+        const syrupResult = trueRecipe.syrup != inputs["syrup"] ? 'wrong' : 'correct'
+        const blendedResult = trueRecipe.blended != inputs["blended"] ? 'wrong' : 'correct'
 
+        setCheckedTemperature(tempResult)
+        setCheckedMilk(milkResult)
+        setCheckedSyrup(syrupResult)
+        setCheckedBlended(blendedResult)
 
-        if (trueRecipe.milk != inputs["milk"]) {
-            setCheckedMilk('wrong')
-        }
-        else {
-            setCheckedMilk('correct')
-        }
+        const allCorrect = [tempResult, milkResult, syrupResult, blendedResult].every(
+            (result) => result === 'correct'
+        )
 
-
-        if (trueRecipe.syrup != inputs["syrup"]) {
-            setCheckedSyrup('wrong')
-        }
-        else {
-            setCheckedSyrup('correct')
-        }
-
-
-        if (trueRecipe.blended != inputs["blended"]) {
-            setCheckedBlended('wrong')
-        }
-        else {
-            setCheckedBlended('correct')
-        }
+        alert(allCorrect ? 'Correct! Not bad - let\'s keep it up!' : 'Wrong! Back to barista school!')
     }
 
 
@@ -82,12 +72,14 @@ const BaristaForm = () => {
 
     return (
         <div>
-            <h2>Hi, I'd like to order a:</h2>
+            <h2 className="order-heading">Hi, I'd like to order a:</h2>
             <div className="drink-container">
                 <h2 className="mini-header">{currentDrink}</h2>
                 <button
                     className="button newdrink"
                     onClick={onNewDrink}
+                    title="Get a new drink"
+                    aria-label="Get a new drink"
                 >
                     🔄
                 </button>
@@ -95,6 +87,7 @@ const BaristaForm = () => {
             <form className="container">
             </form>
 
+            <div className="categories-row">
             <div className="mini-container">
                 <h3>Temperature</h3>
                 <div className={`answer-space ${correct_temp}`} >
@@ -165,6 +158,7 @@ const BaristaForm = () => {
                 choices={ingredients["blended"]}
                 checked={inputs["blended"]}
                 />
+            </div>
             </div>
             <button className='button-submit' onClick={onCheckAnswer}>Check Answer</button>
             <button className='button-newDrink' onClick={onNewDrink}>New Drink</button>
