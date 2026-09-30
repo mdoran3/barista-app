@@ -1,16 +1,41 @@
-# React + Vite
+# On My Grind ☕
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+A barista training game: you're shown a random drink name and have to guess its recipe — temperature, milk, syrup, and whether it's blended — by picking from the options in each category. Hit "Check Answer" to see how you did, with a popup and per-category ✅/❌ feedback.
 
-Currently, two official plugins are available:
+## Features
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+- Random drink + recipe generator, revealed with a typewriter intro
+- Four ingredient categories (Temperature, Milk, Syrup, Blended) laid out as equally-sized cards
+- Per-category correct/wrong feedback with emoji indicators
+- Custom in-page results popup (no native browser alerts)
+- Dark, coffee-inspired visual theme
 
-## React Compiler
+## Tech stack
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+- [React](https://react.dev/) (function components + hooks: `useState`, `useEffect`, `useRef`)
+- [Vite](https://vite.dev/) for dev server and build tooling
+- Plain CSS (custom properties for theming, no CSS framework)
+- [ESLint](https://eslint.org/) for linting
 
-## Expanding the ESLint configuration
+## Project structure
 
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
+- `src/components/BaristaForm.jsx` — main game logic and layout
+- `src/components/RecipeChoices.jsx` — radio-button choice list for a single ingredient category
+- `src/data/drinks.json` — drink names and their correct recipes
+- `src/App.css` / `src/index.css` — app styling and theme variables
+
+## Getting started
+
+```bash
+npm install
+npm run dev
+```
+
+Then open the printed local URL in your browser.
+
+## Available scripts
+
+- `npm run dev` — start the Vite dev server with HMR
+- `npm run build` — build for production
+- `npm run preview` — preview the production build locally
+- `npm run lint` — run ESLint

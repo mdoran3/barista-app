@@ -48,6 +48,8 @@ const BaristaForm = () => {
         return () => clearInterval(typewriterIntervalRef.current)
     }, []);
 
+    const [resultPopup, setResultPopup] = useState(null)
+
     const [correct_temp, setCheckedTemperature] = useState('');
     const [correct_syrup, setCheckedSyrup] = useState('');
     const [correct_milk, setCheckedMilk] = useState('');
@@ -84,7 +86,12 @@ const BaristaForm = () => {
             (result) => result === 'correct'
         )
 
-        alert(allCorrect ? 'Correct! Not bad - let\'s keep it up!' : 'Wrong! Back to barista school!')
+        setResultPopup({
+            allCorrect,
+            message: allCorrect
+                ? 'Correct! Not bad - let\'s keep it up!'
+                : 'Wrong! Back to barista school!',
+        })
     }
 
 
@@ -101,6 +108,7 @@ const BaristaForm = () => {
         setCheckedSyrup('');
         setCheckedMilk('');
         setCheckedBlended('');
+        setResultPopup(null);
     }
 
     return (
@@ -197,6 +205,25 @@ const BaristaForm = () => {
             </div>
             </div>
             <button className='button-submit' onClick={onCheckAnswer}>Check Answer</button>
+
+            {resultPopup && (
+                <div className="popup-overlay" onClick={() => setResultPopup(null)}>
+                    <div className="popup-card" onClick={(e) => e.stopPropagation()}>
+                        <button
+                            className="popup-close"
+                            onClick={() => setResultPopup(null)}
+                            aria-label="Close"
+                        >
+                            ✕
+                        </button>
+                        <div className="popup-icon">{resultPopup.allCorrect ? '✅' : '❌'}</div>
+                        <p className="popup-message">{resultPopup.message}</p>
+                        <button className="button-submit" onClick={() => setResultPopup(null)}>
+                            Got it
+                        </button>
+                    </div>
+                </div>
+            )}
         </div>
     )
 }
