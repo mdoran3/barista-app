@@ -2,6 +2,7 @@ import { useState } from 'react'
 import RecipeChoices from './RecipeChoices'
 import drinksJson from '../data/drinks.json'
 import { useEffect } from 'react'
+import { useRef } from 'react'
 
 const ingredients = {
     temperature: ['hot', 'lukewarm', 'cold'],
@@ -10,10 +11,41 @@ const ingredients = {
     blended: ['yes', 'turbo','no']
 }
 
+const ORDER_HEADING_TEXT = "Hi, I'd like to order a:"
+
+const ResultEmoji = ({ result }) => {
+    if (result === 'correct') return <span> ✅</span>
+    if (result === 'wrong') return <span> ❌</span>
+    return null
+}
+
 const BaristaForm = () => {
+
+    const [typedHeading, setTypedHeading] = useState('')
+    const [showDrink, setShowDrink] = useState(false)
+    const typewriterIntervalRef = useRef(null)
+
+    const playTypewriter = () => {
+        clearInterval(typewriterIntervalRef.current)
+        setTypedHeading('')
+        setShowDrink(false)
+
+        let charIndex = 0
+        typewriterIntervalRef.current = setInterval(() => {
+            charIndex += 1
+            setTypedHeading(ORDER_HEADING_TEXT.slice(0, charIndex))
+            if (charIndex >= ORDER_HEADING_TEXT.length) {
+                clearInterval(typewriterIntervalRef.current)
+                setShowDrink(true)
+            }
+        }, 60)
+    }
 
     useEffect(() => {
         getNewDrink();
+        playTypewriter();
+
+        return () => clearInterval(typewriterIntervalRef.current)
     }, []);
 
     const [correct_temp, setCheckedTemperature] = useState('');
@@ -64,6 +96,7 @@ const BaristaForm = () => {
             'blended': '' });
 
         getNewDrink();
+        playTypewriter();
         setCheckedTemperature('');
         setCheckedSyrup('');
         setCheckedMilk('');
@@ -72,9 +105,7 @@ const BaristaForm = () => {
 
     return (
         <div>
-            <h2 className="order-heading">Hi, I'd like to order a:</h2>
-            <div className="drink-container">
-                <h2 className="mini-header">{currentDrink}</h2>
+            <div className="newdrink-control">
                 <button
                     className="button newdrink"
                     onClick={onNewDrink}
@@ -83,6 +114,11 @@ const BaristaForm = () => {
                 >
                     🔄
                 </button>
+                <span className="newdrink-label">New drink</span>
+            </div>
+            <h2 className="order-heading typewriter">{typedHeading}</h2>
+            <div className={`drink-container ${showDrink ? 'visible' : ''}`}>
+                <h2 className="mini-header">{currentDrink}</h2>
             </div>
             <form className="container">
             </form>
@@ -91,7 +127,7 @@ const BaristaForm = () => {
             <div className="mini-container">
                 <h3>Temperature</h3>
                 <div className={`answer-space ${correct_temp}`} >
-                  {inputs["temperature"]} 
+                  {inputs["temperature"]}<ResultEmoji result={correct_temp} />
                 </div>
                 <RecipeChoices
                     handleChange={(e) => 
@@ -109,7 +145,7 @@ const BaristaForm = () => {
             <div className="mini-container">
             <h3>Milk</h3>
             <div className={`answer-space ${correct_milk}`} >
-              {inputs["milk"]} 
+              {inputs["milk"]}<ResultEmoji result={correct_milk} />
             </div>
             <RecipeChoices
                 handleChange={(e) => 
@@ -127,7 +163,7 @@ const BaristaForm = () => {
             <div className="mini-container">
                 <h3>Syrup</h3>
                 <div className={`answer-space ${correct_syrup}`} >
-                  {inputs["syrup"]} 
+                  {inputs["syrup"]}<ResultEmoji result={correct_syrup} />
                 </div>
                 <RecipeChoices
                 handleChange={(e) => 
@@ -145,7 +181,7 @@ const BaristaForm = () => {
             <div className="mini-container">
                 <h3>Blended</h3>
                 <div className={`answer-space ${correct_blended}`} >
-                  {inputs["blended"]} 
+                  {inputs["blended"]}<ResultEmoji result={correct_blended} />
                 </div>
                 <RecipeChoices
                     handleChange={(e) => 
@@ -161,7 +197,6 @@ const BaristaForm = () => {
             </div>
             </div>
             <button className='button-submit' onClick={onCheckAnswer}>Check Answer</button>
-            <button className='button-newDrink' onClick={onNewDrink}>New Drink</button>
         </div>
     )
 }
